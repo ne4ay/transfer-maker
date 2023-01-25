@@ -27,7 +27,7 @@ public class TransferMakerBeanConfiguration {
     }
 
     @Bean
-    public TaskExecutor taskExecutor(TransferMakerProperties properties) {
+    public TaskExecutor requestTaskExecutor(TransferMakerProperties properties) {
         return new TaskExecutor(properties.getTaskExecutorCountOfThreads(), properties.getTickPeriodMs());
     }
 
