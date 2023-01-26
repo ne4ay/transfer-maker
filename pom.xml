@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ua.nechay</groupId>
 	<artifactId>transfer-maker</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>transfer-maker</name>
 	<description>Project for shifting the cash from balances</description>
 	<properties>
