@@ -1,18 +1,14 @@
 package ua.nechay.transfermaker.logic;
 
-import org.springframework.web.ErrorResponse;
-import org.springframework.web.client.RestTemplate;
 import ua.nechay.transfermaker.domain.TaskKey;
 import ua.nechay.transfermaker.dto.wise.AccountBalanceTO;
 import ua.nechay.transfermaker.dto.wise.MoneyTO;
 import ua.nechay.transfermaker.dto.wise.request.MoveMoneyRequestTO;
+import ua.nechay.transfermaker.dto.wise.response.MoveMoneyResponseTO;
 import ua.nechay.transfermaker.internal.Either;
 import ua.nechay.transfermaker.internal.RequestError;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author anechaev
@@ -33,23 +29,24 @@ public class BalanceCheckTask implements Runnable {
     @Override
     public void run() {
         String profileId = taskKey.getProfileId();
-        Either<RequestError, List<AccountBalanceTO>> either = requester.getBalances(profileId, token);
+        Either<RequestError, AccountBalanceTO> either = requester.getBalance(profileId, taskKey.getBalanceId(), token);
         if (either.isLeft()) {
             System.out.println(either.getLeft()); //TODO: clean
             return;
         }
-        List<AccountBalanceTO> balances = either.getRight();
-        List<RequestError> errors = balances.stream()
-            .map(AccountBalanceTO::getAmount)
-            .filter(Objects::nonNull)
-            .filter(money -> money.getValue() != 0)
-            .map(this::createRequest)
-            .map(request -> requester.moveMoney(request, profileId, token))
-            .filter(Either::isLeft)
-            .map(Either::getLeft)
-            .toList();
-        for (var error : errors) {
-            System.out.println(error); //TODO: clean
+        AccountBalanceTO balance = either.getRight();
+        MoneyTO money = balance.getAmount();
+        if (money == null) {
+            return;
+        }
+        if (money.getValue() == 0) {
+            return;
+        }
+        System.out.println("Start to move money for: " + taskKey); //TODO: clean
+        MoveMoneyRequestTO request = createRequest(money);
+        Either<RequestError, MoveMoneyResponseTO> response = requester.moveMoney(request, profileId, token);
+        if (response.isLeft()) {
+            System.out.println("ERROR: " +response.getLeft()); //TODO: clean
         }
     }
 

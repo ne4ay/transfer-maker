@@ -15,7 +15,6 @@ import ua.nechay.transfermaker.internal.Either;
 import ua.nechay.transfermaker.internal.RequestError;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,15 +28,17 @@ public class TaskRestRequester {
 
     //TODO: return either monad
     @Nonnull
-    public Either<RequestError, List<AccountBalanceTO>> getBalances(@Nonnull String profileId, @Nonnull String token) {
+    public Either<RequestError, AccountBalanceTO> getBalance(
+        @Nonnull String profileId, @Nonnull String balanceId, @Nonnull String token)
+    {
         HttpHeaders headers = createHeaders(token);
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
-        String url = properties.getExternalWisePath() + "/v4/profiles/" + profileId + "/balances?types=STANDARD";
+        String url = properties.getExternalWisePath() + "/v4/profiles/" + profileId + "/balances/" + balanceId;
         return makeRequest(() -> restTemplate.exchange(url,
                 HttpMethod.GET,
                 requestEntity,
-                new ParameterizedTypeReference<List<AccountBalanceTO>>() {}), "request account balances");
+                new ParameterizedTypeReference<AccountBalanceTO>() {}), "request account balances");
     }
 
     public Either<RequestError, MoveMoneyResponseTO> moveMoney(@Nonnull MoveMoneyRequestTO request, @Nonnull String profileId, @Nonnull String token) {
@@ -45,7 +46,7 @@ public class TaskRestRequester {
         HttpHeaders headers = createHeaders(token);
         headers.add("Content-Type", "application/json");
         headers.add("X-idempotence-uuid", uuid);
-        HttpEntity<MoveMoneyRequestTO> requestEntity = new HttpEntity<>(request);
+        HttpEntity<MoveMoneyRequestTO> requestEntity = new HttpEntity<>(request, headers);
         String url = properties.getExternalWisePath() + "/v2/profiles/" + profileId + "/balance-movements";
         return makeRequest(() -> restTemplate.exchange(url,
             HttpMethod.POST,

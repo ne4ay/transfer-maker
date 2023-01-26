@@ -5,6 +5,7 @@ import ua.nechay.transfermaker.dto.input.request.TaskRegisterRequestTO;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * @author anechaev
@@ -60,5 +61,14 @@ public class TaskKey {
     @Override
     public int hashCode() {
         return Objects.hash(balanceId, targetBalanceId, profileId);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", TaskKey.class.getSimpleName() + "[", "]")
+            .add("balanceId='" + balanceId + "'")
+            .add("targetBalanceId='" + targetBalanceId + "'")
+            .add("profileId='" + profileId + "'")
+            .toString();
     }
 }
