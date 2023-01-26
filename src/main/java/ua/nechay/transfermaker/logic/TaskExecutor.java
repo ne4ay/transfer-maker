@@ -22,6 +22,6 @@ public class TaskExecutor {
 
     @Nonnull
     public ScheduledFuture<?> registerNewTask(@Nonnull Runnable command) {
-        return executorService.scheduleAtFixedRate(command, 0, periodMs, TimeUnit.MILLISECONDS);
+        return executorService.scheduleWithFixedDelay(command, 0, periodMs, TimeUnit.MILLISECONDS);
     }
 }
