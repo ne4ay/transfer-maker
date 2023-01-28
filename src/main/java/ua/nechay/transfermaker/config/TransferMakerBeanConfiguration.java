@@ -4,10 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import ua.nechay.transfermaker.logic.AlertNotifier;
 import ua.nechay.transfermaker.logic.TaskExecutor;
 import ua.nechay.transfermaker.logic.TaskPool;
 import ua.nechay.transfermaker.logic.TaskRestRequester;
 import ua.nechay.transfermaker.logic.TaskScheduler;
+
+import java.lang.reflect.AnnotatedElement;
 
 /**
  * @author anechaev
@@ -38,14 +41,23 @@ public class TransferMakerBeanConfiguration {
 
     @Bean
     public RestTemplate restTemplate(TransferMakerProperties properties) {
-        SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-        httpRequestFactory.setConnectTimeout(properties.getRestConnectionTimeoutMs());
-        httpRequestFactory.setReadTimeout(properties.getRestReadTimeoutMs());
-        return new RestTemplate(httpRequestFactory);
+        return createRestTemplateAccordingToProperties(properties);
     }
 
     @Bean
     public TaskRestRequester requester() {
         return new TaskRestRequester();
+    }
+
+    @Bean
+    public AlertNotifier alertNotifier(TransferMakerProperties properties) {
+        return new AlertNotifier(createRestTemplateAccordingToProperties(properties), properties.getExternalExceptionAlertingPath());
+    }
+
+    private RestTemplate createRestTemplateAccordingToProperties(TransferMakerProperties properties) {
+        SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
+        httpRequestFactory.setConnectTimeout(properties.getRestConnectionTimeoutMs());
+        httpRequestFactory.setReadTimeout(properties.getRestReadTimeoutMs());
+        return new RestTemplate(httpRequestFactory);
     }
 }

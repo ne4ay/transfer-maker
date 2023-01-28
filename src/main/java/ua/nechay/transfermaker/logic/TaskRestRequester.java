@@ -5,6 +5,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ua.nechay.transfermaker.config.TransferMakerProperties;
@@ -60,13 +61,14 @@ public class TaskRestRequester {
             response = action.request();
         } catch (Exception e) {
             e.printStackTrace();
-            return Either.left(new RequestError("Some error happened during performing " + actionName));
+            return Either.left(new RequestError(null, "Some error happened during performing " + actionName + "; Error: " + e));
         }
-        if (response.getStatusCode().is2xxSuccessful()) {
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode.is2xxSuccessful()) {
             return Either.right(response.getBody());
         }
         System.out.println(response); //TODO: clean
-        return Either.left(new RequestError("Non successful code has been gotten: " + response.getStatusCode() + " during " + actionName));
+        return Either.left(new RequestError(statusCode.value(), "Non successful code has been gotten: " + response.getStatusCode() + " during " + actionName));
     }
 
     private HttpHeaders createHeaders(@Nonnull String token) {

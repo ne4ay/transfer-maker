@@ -17,11 +17,15 @@ import javax.annotation.Nonnull;
 public class BalanceCheckTask implements Runnable {
 
     private final TaskRestRequester requester;
+    private final AlertNotifier alertNotifier;
     private final TaskKey taskKey;
     private final String token;
 
-    public BalanceCheckTask(@Nonnull TaskRestRequester requester, @Nonnull TaskKey key, @Nonnull String token) {
+    public BalanceCheckTask(@Nonnull TaskRestRequester requester, @Nonnull AlertNotifier alertNotifier,
+        @Nonnull TaskKey key, @Nonnull String token)
+    {
         this.requester = requester;
+        this.alertNotifier = alertNotifier;
         this.taskKey = key;
         this.token = token;
     }
@@ -31,7 +35,7 @@ public class BalanceCheckTask implements Runnable {
         String profileId = taskKey.getProfileId();
         Either<RequestError, AccountBalanceTO> either = requester.getBalance(profileId, taskKey.getBalanceId(), token);
         if (either.isLeft()) {
-            System.out.println(either.getLeft()); //TODO: clean
+            RequestError requestError = either.getLeft();
             return;
         }
         AccountBalanceTO balance = either.getRight();
@@ -52,5 +56,9 @@ public class BalanceCheckTask implements Runnable {
 
     private MoveMoneyRequestTO createRequest(@Nonnull MoneyTO money) {
         return new MoveMoneyRequestTO(money, taskKey.getBalanceId(), taskKey.getTargetBalanceId());
+    }
+
+    private void notifyAboutError(@Nonnull RequestError requestError) {
+        alertNotifier.notifyAlert(requestError, taskKey);
     }
 }

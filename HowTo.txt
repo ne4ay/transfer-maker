@@ -1,5 +1,6 @@
 ./mvnw clean install
 
-docker build -t transfer-maker .
+docker build -t maker-transfer .
 
-docker run -it -p 8080:8080 transfer-maker
+docker run -it -p 8080:8080 maker-transfer
+// docker run -it -p 8080:8080 maker-transfer

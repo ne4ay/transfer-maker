@@ -17,9 +17,6 @@ public class TransferMakerProperties {
     @Value("${wise.authorization.type}")
     private String wiseAuthorizationType;
 
-    @Value("${wise.authorization.value}")
-    private String wiseAuthorizationValue;
-
     @Value("${task.executor.service.thread.amount:20}")
     private int taskExecutorCountOfThreads;
 
@@ -32,6 +29,9 @@ public class TransferMakerProperties {
     @Value("${wise.rest.read.timeout.ms:20000}")
     private int restReadTimeoutMs;
 
+    @Value("${external.exception.alerting.path}")
+    private String externalExceptionAlertingPath;
+
     @PostConstruct
     public void init() {
         System.out.println(this); //TODO: clean
@@ -43,10 +43,6 @@ public class TransferMakerProperties {
 
     public String getWiseAuthorizationType() {
         return wiseAuthorizationType;
-    }
-
-    public String getWiseAuthorizationValue() {
-        return wiseAuthorizationValue;
     }
 
     public int getTaskExecutorCountOfThreads() {
@@ -65,16 +61,20 @@ public class TransferMakerProperties {
         return restReadTimeoutMs;
     }
 
+    public String getExternalExceptionAlertingPath() {
+        return externalExceptionAlertingPath;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", TransferMakerProperties.class.getSimpleName() + "[", "]")
             .add("externalWisePath='" + externalWisePath + "'")
             .add("wiseAuthorizationType='" + wiseAuthorizationType + "'")
-            .add("wiseAuthorizationValue='" + wiseAuthorizationValue + "'")
             .add("taskExecutorCountOfThreads=" + taskExecutorCountOfThreads)
             .add("tickPeriodMs=" + tickPeriodMs)
             .add("restConnectionTimeoutMs=" + restConnectionTimeoutMs)
             .add("restReadTimeoutMs=" + restReadTimeoutMs)
+            .add("externalExceptionAlertingPath='" + externalExceptionAlertingPath + "'")
             .toString();
     }
 }
