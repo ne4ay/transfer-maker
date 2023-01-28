@@ -5,7 +5,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ua.nechay.transfermaker.config.TransferMakerProperties;
@@ -63,7 +62,7 @@ public class TaskRestRequester {
             e.printStackTrace();
             return Either.left(new RequestError(null, "Some error happened during performing " + actionName + "; Error: " + e));
         }
-        HttpStatusCode statusCode = response.getStatusCode();
+        var statusCode = response.getStatusCode();
         if (statusCode.is2xxSuccessful()) {
             return Either.right(response.getBody());
         }

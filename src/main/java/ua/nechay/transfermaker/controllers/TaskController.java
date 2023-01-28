@@ -1,5 +1,6 @@
 package ua.nechay.transfermaker.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +35,7 @@ public class TaskController {
     @Autowired private TaskScheduler taskScheduler;
     @Autowired private TaskPool taskPool;
 
+    @Operation(summary = "Register new task")
     @PostMapping("/register")
     public @ResponseBody TaskRegisterResponseTO registerTask(@RequestBody TaskRegisterRequestTO request) {
         TaskKey key = TaskKey.fromRequest(request);
@@ -41,6 +43,7 @@ public class TaskController {
         return TaskRegisterResponseTO.fromResult(result);
     }
 
+    @Operation(summary = "Deactivate existing task")
     @PostMapping("/deactivate")
     public @ResponseBody TaskDeactivatingResponseTO deactivateTask(@RequestBody TaskDeactivatingRequestTO request) {
         TaskKey key = TaskKey.fromRequest(request);

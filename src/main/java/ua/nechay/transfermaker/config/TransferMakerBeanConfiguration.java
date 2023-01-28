@@ -10,8 +10,6 @@ import ua.nechay.transfermaker.logic.TaskPool;
 import ua.nechay.transfermaker.logic.TaskRestRequester;
 import ua.nechay.transfermaker.logic.TaskScheduler;
 
-import java.lang.reflect.AnnotatedElement;
-
 /**
  * @author anechaev
  * @since 25.01.2023

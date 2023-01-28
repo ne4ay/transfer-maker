@@ -1,8 +1,8 @@
 package ua.nechay.transfermaker.config;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.PostConstruct;
 import java.util.StringJoiner;
 
 /**
